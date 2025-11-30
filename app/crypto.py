@@ -21,13 +21,13 @@ def encrypt_private_key(private_key: rsa.PrivateKey, passphrase: str) -> bytes:
     ciphertext, tag = cipher.encrypt_and_digest(DECRYPTED_INDICATOR + private_key.save_pkcs1())
     return cipher.nonce + tag + ciphertext
 
-def decrypt_private_key(ciphertext: bytes, passphrase: str) -> rsa.PrivateKey:
+def decrypt_private_key(ciphertext: bytes, passphrase: str) -> bytes:
     key = key_from_passphrase(passphrase)
     cipher = AES.new(key, AES.MODE_EAX, ciphertext[:16])
-    data = cipher.decrypt(ciphertext[16:])
+    data = cipher.decrypt(ciphertext[32:])
     if data[:len(DECRYPTED_INDICATOR)] != DECRYPTED_INDICATOR:
         raise ValueError("Invalid decryption")
-    private_key = rsa.PrivateKey.load_pkcs1(data[len(DECRYPTED_INDICATOR):])
+    private_key = data[len(DECRYPTED_INDICATOR):]
     return private_key
 
 

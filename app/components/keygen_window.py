@@ -52,6 +52,6 @@ class KeydecryptWindow(dcg.Window):
         except ValueError:
             ModalWindow(self.context, "Invalid Passphrase")
         else:
-            self._on_decrypted_callback(priv)
+            self._on_decrypted_callback(priv, passphrase=self._passphrase.value)
             ModalWindow(self.context, "Key Decrypted")
             self.delete_item()

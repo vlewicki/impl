@@ -2,7 +2,7 @@ from functools import partial
 from typing import Any, Callable
 import dearcygui as dcg
 from .modal_window import ModalWindow
-from .keygen_window import KeygenWindow
+from .keygen_window import KeydecryptWindow, KeygenWindow
 from .. import crypto
 import rsa
 
@@ -98,22 +98,26 @@ class MainWindow(dcg.Window):
     def _on_message_file_load(self, data: bytes, indicator_text: str):
         self._message = data
         self._message_indicator.value = indicator_text
-        self._message_indicator.color = (255, 255, 255)
+        self._message_indicator.color = (0, 0, 0)
 
-    def _on_private_key_load(self, data: bytes, indicator_text: str):
-        self._private_key = rsa.PrivateKey.load_pkcs1(data)
+    def _on_private_key_load(self, data: bytes, indicator_text: str, passphrase=None):
+        try:
+            self._private_key = rsa.PrivateKey.load_pkcs1(data)
+        except:
+            KeydecryptWindow(self.context, data, partial(self._on_private_key_load, indicator_text=indicator_text))
+        self._passphrase = passphrase
         self._private_key_indicator.value = indicator_text
-        self._private_key_indicator.color = (255, 255, 255)
+        self._private_key_indicator.color = (0, 0, 0)
 
     def _on_public_key_load(self, data: bytes, indicator_text: str):
         self._public_key = rsa.PublicKey.load_pkcs1(data)
         self._public_key_indicator.value = indicator_text
-        self._public_key_indicator.color = (255, 255, 255)
+        self._public_key_indicator.color = (0, 0, 0)
 
     def _on_signature_file_load(self, data: bytes, indicator_text: str):
         self._signature = data
         self._signature_indicator.value = indicator_text
-        self._signature_indicator.color = (255, 255, 255)
+        self._signature_indicator.color = (0, 0, 0)
 
     def _on_signature_create(self):
         if self._message is None:
@@ -149,8 +153,11 @@ class MainWindow(dcg.Window):
         if self._private_key is None:
             ModalWindow(self.context, "No private key loaded")
             return
-
-        write_file_as_bytes(paths[0], self._private_key.save_pkcs1())
+        if self._passphrase:
+            chiphertext = crypto.encrypt_private_key(self._private_key, self._passphrase)
+        else:
+            chiphertext = self._private_key.save_pkcs1()
+        write_file_as_bytes(paths[0], chiphertext)
 
     def _on_public_key_save(self, paths: list[str]):
         if self._public_key is None:
