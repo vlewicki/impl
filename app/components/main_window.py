@@ -58,7 +58,7 @@ class MainWindow(dcg.Window):
 
                 with dcg.Menu(context, label="Keys"):
                     dcg.MenuItem(context, label="Generate RSA key pair", callback=lambda: KeygenWindow(context, self._generate_rsa_key_pair))
-                    dcg.MenuItem(context, label="Set key passphrase")
+                    # dcg.MenuItem(context, label="Set key passphrase")
 
                 with dcg.Menu(context, label="Signature"):
                     dcg.MenuItem(context, label="Create signature", callback=self._on_signature_create)

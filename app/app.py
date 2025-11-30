@@ -22,7 +22,7 @@ class App(dcg.Context):
         light_theme = LightTheme(self)
         theme = dcg.ThemeStyleImGui(self, frame_rounding=5, window_rounding=5, child_rounding=5)
         font = dcg.AutoFont(self, font_creator=make_font, main_font_path=resource_path('res/Roboto-Regular.ttf'))
-        self.viewport.initialize(width=800, height=600, theme=dcg.ThemeList(self, children=[light_theme, theme]), font=font)
+        self.viewport.initialize(width=800, height=600, theme=dcg.ThemeList(self, children=[light_theme, theme]), font=font, title="RSA signing/verification")
         MainWindow(self, primary=True)
 
     def run(self):
