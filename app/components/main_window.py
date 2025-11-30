@@ -105,9 +105,10 @@ class MainWindow(dcg.Window):
             self._private_key = rsa.PrivateKey.load_pkcs1(data)
         except:
             KeydecryptWindow(self.context, data, partial(self._on_private_key_load, indicator_text=indicator_text))
-        self._passphrase = passphrase
-        self._private_key_indicator.value = indicator_text
-        self._private_key_indicator.color = (0, 0, 0)
+        else:
+            self._passphrase = passphrase
+            self._private_key_indicator.value = indicator_text
+            self._private_key_indicator.color = (0, 0, 0)
 
     def _on_public_key_load(self, data: bytes, indicator_text: str):
         self._public_key = rsa.PublicKey.load_pkcs1(data)
